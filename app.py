@@ -4,8 +4,11 @@ import requests
 from dotenv import load_dotenv
 import os
 
-movies_df = pd.read_csv("data/tmdb_5000_movies.csv")
-credits_df = pd.read_csv("data/tmdb_5000_credits.csv")
+import pandas as pd
+import ast
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
 
 # Load environment variables
 load_dotenv()
