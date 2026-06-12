@@ -14,6 +14,86 @@ from sklearn.metrics.pairwise import cosine_similarity
 load_dotenv()
 API_KEY = os.getenv("TMDB_API_KEY")
 
+@st.cache_resource
+def load_data():
+
+    movies = pd.read_csv("data/tmdb_5000_movies.csv")
+    credits = pd.read_csv("data/tmdb_5000_credits.csv")
+
+    movies = movies.merge(credits, on="title")
+
+    movies = movies[
+        ['movie_id','title','overview','genres',
+         'keywords','cast','crew']
+    ]
+
+    movies.dropna(inplace=True)
+
+    def convert(obj):
+        L = []
+        for i in ast.literal_eval(obj):
+            L.append(i['name'])
+        return L
+
+    def convert_cast(obj):
+        L = []
+        counter = 0
+
+        for i in ast.literal_eval(obj):
+            if counter < 3:
+                L.append(i['name'])
+                counter += 1
+            else:
+                break
+
+        return L
+
+    def fetch_director(obj):
+        L = []
+
+        for i in ast.literal_eval(obj):
+            if i['job'] == 'Director':
+                L.append(i['name'])
+                break
+
+        return L
+
+    movies['genres'] = movies['genres'].apply(convert)
+    movies['keywords'] = movies['keywords'].apply(convert)
+    movies['cast'] = movies['cast'].apply(convert_cast)
+    movies['crew'] = movies['crew'].apply(fetch_director)
+
+    movies['overview'] = movies['overview'].apply(lambda x: x.split())
+
+    movies['tags'] = (
+        movies['overview']
+        + movies['genres']
+        + movies['keywords']
+        + movies['cast']
+        + movies['crew']
+    )
+
+    new_df = movies[['movie_id','title','tags']]
+
+    new_df['tags'] = new_df['tags'].apply(
+        lambda x: " ".join(x).lower()
+    )
+
+    cv = CountVectorizer(
+        max_features=5000,
+        stop_words='english'
+    )
+
+    vectors = cv.fit_transform(
+        new_df['tags']
+    ).toarray()
+
+    similarity = cosine_similarity(vectors)
+
+    return new_df, similarity
+
+
+movies, similarity = load_data()
 
 # ---------------------------
 # Helper Functions
