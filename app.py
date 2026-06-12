@@ -1,5 +1,4 @@
 import streamlit as st
-import pickle
 import requests
 from dotenv import load_dotenv
 import os
@@ -10,7 +9,6 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 
-# Load environment variables
 load_dotenv()
 API_KEY = os.getenv("TMDB_API_KEY")
 
@@ -95,9 +93,6 @@ def load_data():
 
 movies, similarity = load_data()
 
-# ---------------------------
-# Helper Functions
-# ---------------------------
 
 def fetch_poster(movie_id):
 
@@ -166,9 +161,6 @@ def recommend(movie):
         similarity_scores
     )
 
-# ---------------------------
-# Page Configuration
-# ---------------------------
 
 st.set_page_config(
     page_title="🎬 CineMatch AI",
@@ -176,9 +168,8 @@ st.set_page_config(
     layout="wide"
 )
 
-# ---------------------------
-# Custom CSS
-# ---------------------------
+
+# CSS
 
 st.markdown("""
 <style>
@@ -247,9 +238,7 @@ p {
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------------------
 # Title
-# ---------------------------
 
 st.markdown("""
 # 🎬 CineMatch AI
@@ -259,9 +248,6 @@ st.markdown("""
 Get personalized movie recommendations based on genres, cast, directors, keywords, and storyline similarities.
 """)
 
-# ---------------------------
-# Sidebar
-# ---------------------------
 
 with st.sidebar:
 
@@ -281,18 +267,13 @@ with st.sidebar:
         "Built using Python, Scikit-Learn, TMDB API and Streamlit"
     )
 
-# ---------------------------
 # Movie Selection
-# ---------------------------
 
 selected_movie = st.selectbox(
     "🎥 Choose a Movie",
     movies['title'].values
 )
 
-# ---------------------------
-# Recommendation Button
-# ---------------------------
 
 if st.button("Recommend"):
 
@@ -304,7 +285,6 @@ if st.button("Recommend"):
 
     st.subheader("🎯 Recommended Movies")
 
-    # First Row
     row1 = st.columns(3)
 
     for idx in range(3):
@@ -337,8 +317,6 @@ if st.button("Recommend"):
             st.caption(
                 f"Match Score: {scores[idx]}%"
             )
-
-    # Second Row
     row2 = st.columns(2)
 
     for idx in range(3, 5):
