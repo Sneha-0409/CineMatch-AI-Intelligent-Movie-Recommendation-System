@@ -4,6 +4,9 @@ import requests
 from dotenv import load_dotenv
 import os
 
+movies_df = pd.read_csv("data/tmdb_5000_movies.csv")
+credits_df = pd.read_csv("data/tmdb_5000_credits.csv")
+
 # Load environment variables
 load_dotenv()
 API_KEY = os.getenv("TMDB_API_KEY")
