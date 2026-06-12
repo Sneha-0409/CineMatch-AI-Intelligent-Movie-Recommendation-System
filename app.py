@@ -14,9 +14,6 @@ from sklearn.metrics.pairwise import cosine_similarity
 load_dotenv()
 API_KEY = os.getenv("TMDB_API_KEY")
 
-# Load model files
-movies = pickle.load(open('movie_list.pkl', 'rb'))
-similarity = pickle.load(open('similarity.pkl', 'rb'))
 
 # ---------------------------
 # Helper Functions
